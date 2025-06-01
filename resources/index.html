@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 C++高性能Web服务器 - 功能平台</title>
+    <!-- 页面图标 -->
+    <link rel="icon" href="images/favicon.ico">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 动态背景粒子效果 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            animation: float 6s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(10deg);
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .logo {
+            font-size: 4em;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FF6B6B);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            color: #E8E8E8;
+        }
+
+        /* 功能导航区域 */
+        .nav-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
+            margin: 30px 0;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-title {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: #FFD700;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .nav-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item.active {
+            border-color: #4ECDC4;
+            background: rgba(78, 205, 196, 0.2);
+        }
+
+        .nav-item.coming-soon {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .nav-item.active:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: #45B7D1;
+        }
+
+        .nav-icon {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .nav-item.active .nav-icon {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .nav-item h3 {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+
+        .nav-item p {
+            opacity: 0.9;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .nav-button {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1);
+            background-size: 300% 300%;
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            animation: gradientMove 3s ease infinite;
+        }
+
+        @keyframes gradientMove {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            filter: brightness(1.1);
+        }
+
+        .nav-button.disabled {
+            background: #666;
+            cursor: not-allowed;
+            animation: none;
+        }
+
+        .nav-button.disabled:hover {
+            transform: none;
+            box-shadow: none;
+            filter: none;
+        }
+
+        .coming-soon-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #FF6B6B;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #4ECDC4;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            z-index: 3;
+        }
+
+        .footer-time {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            color: #FFD700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .footer-text {
+            opacity: 0.8;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2.2em;
+            }
+
+            .logo {
+                font-size: 3em;
+            }
+
+            .nav-section {
+                padding: 30px 20px;
+                margin: 20px 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 头部区域 -->
+        <header class="header">
+            <div class="logo">🚀 C++高性能Web服务器</div>
+        </header>
+
+        <!-- 功能导航区域 -->
+        <section class="nav-section">
+            <h2 class="nav-title">🌟 四大核心功能</h2>
+
+            <div class="nav-grid">
+                <!-- 1. Multi-Agent 协作系统 -->
+                <div class="nav-item active">
+                    <span class="status-badge">已上线</span>
+                    <span class="nav-icon">🤖</span>
+                    <h3>Multi-Agent 协作</h3>
+                    <p>三智能体协作创作：编辑规划 → 写作创作 → 审核定稿</p>
+                    <a href="/cgi-bin/autogen-multi-agent.cgi" class="nav-button" target="_blank">
+                        ✨ 开始协作创作
+                    </a>
+                </div>
+
+                <!-- 2. Thai菜谱专家 -->
+                <div class="nav-item active">
+                    <span class="status-badge">已上线</span>
+                    <span class="nav-icon">🍜</span>
+                    <h3>Thai菜谱专家</h3>
+                    <p>基于AI的专业泰式料理指导，提供正宗菜谱和烹饪技巧</p>
+                    <a href="/cgi-bin/thai-recipe-expert.cgi" class="nav-button" target="_blank">
+                        🍛 咨询菜谱专家
+                    </a>
+                </div>
+
+                <!-- 3. AI智能搜索 -->
+                <div class="nav-item active">
+                    <span class="status-badge">已上线</span>
+                    <span class="nav-icon">🔧</span>
+                    <h3>AI代码生成器</h3>
+                    <p>基于GPT-4o的专业代码生成工具，提供高质量Python代码实现</p>
+                    <a href="/cgi-bin/code-generator.cgi" class="nav-button" target="_blank">
+                        🚀 生成代码
+                    </a>
+                </div>
+
+                <!-- 4. AI聊天助手 -->
+                <div class="nav-item active">
+                    <span class="status-badge">已上线</span>
+                    <span class="nav-icon">💬</span>
+                    <h3>AI聊天助手</h3>
+                    <p>基于GPT-4o的智能对话助手，可以回答各种问题和提供建议</p>
+                    <a href="/cgi-bin/ai-chat.cgi" class="nav-button" target="_blank">
+                        💬 开始聊天
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-time" id="beijing-time">加载中...</div>
+        <div class="footer-text">&copy; 2024 高性能Web服务器 • 四大核心功能全面上线</div>
+    </footer>
+
+    <script>
+
+        // 更新北京时间
+        function updateBeijingTime() {
+            const now = new Date();
+            // 将UTC时间转换为北京时间 (UTC+8)
+            const beijingTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
+
+            const timeString = beijingTime.toISOString().replace('T', ' ').substring(0, 19);
+            const [date, time] = timeString.split(' ');
+
+            document.getElementById('beijing-time').textContent = `${date} ${time}`;
+        }
+
+        // 页面加载完成后开始更新时间
+        document.addEventListener('DOMContentLoaded', function () {
+            updateBeijingTime();
+            // 每秒更新一次时间
+            setInterval(updateBeijingTime, 1000);
+        });
+    </script>
+</body>
+
+</html>
